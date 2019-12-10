@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Random;
 
 
@@ -8,13 +7,18 @@ public class Genotype
     private int[] genes;
     private Random generator;
 
-    public Genotype(Random generator, boolean generate)
+    private Genotype(Random generator, boolean generate)
     {
         this.generator = generator;
         this.genes = new int[32];
         if (generate)
             for (int i = 0; i < genesNumber; i++)
                 this.genes[i] = generator.nextInt(8) + 1;
+    }
+
+    public Genotype(Random generator)
+    {
+        this(generator, true);
     }
 
     public int[] getGenes()

@@ -61,4 +61,11 @@ public class Vector2d
     {
         return new Vector2d(-this.x, -this.y);
     }
+
+    public Vector2d updateWithBoundaries(Vector2d bottomLeft, Vector2d topRight)
+    {
+        int xNew = bottomLeft.x + (this.x - bottomLeft.x) % (topRight.x - bottomLeft.x + 1);
+        int yNew = bottomLeft.y + (this.y - bottomLeft.y) % (topRight.y - bottomLeft.y + 1);
+        return new Vector2d(xNew, yNew);
+    }
 }

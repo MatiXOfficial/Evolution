@@ -4,22 +4,21 @@ public class World
 {
     public static void main(String[] args)
     {
-        Random generator = new Random(323);
+        Random generator = new Random(16);
         for (int i = 0; i < 32; i++)
         {
-            System.out.print((generator.nextInt(8) + 1) + ", ");
+            System.out.printf("%3d", i);
         }
         System.out.println();
         for (int i = 0; i < 32; i++)
         {
-            System.out.print((generator.nextInt(8) + 1) + ", ");
+            System.out.printf("%3d", (generator.nextInt(8) + 1));
         }
         System.out.println();
-        int i = generator.nextInt(33);
-        int j = generator.nextInt(33 - i) + i;
-        System.out.println(i + ", " + j);
-        System.out.println(generator.nextInt(2) + ", " + generator.nextInt(2));
-        //System.out.println(generator.nextInt(2));
-        System.out.println(generator.nextInt(32));
+        System.out.println(generator.nextInt(8));
+        for (int i = 0; i < 4; i++)
+        {
+            System.out.print(generator.nextInt(32) + ", ");
+        }
     }
 }
