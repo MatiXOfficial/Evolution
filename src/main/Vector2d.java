@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Vector2d
 {
     public final int x;
@@ -34,13 +36,13 @@ public class Vector2d
         return new Vector2d(this.x - that.x, this.y - that.y);
     }
 
-    public boolean equals(Object other)
+    public boolean equals(Object obj)
     {
-        if (this == other)
+        if (this == obj)
             return true;
-        if (!(other instanceof Vector2d))
+        if (!(obj instanceof Vector2d))
             return false;
-        Vector2d that = (Vector2d) other;
+        Vector2d that = (Vector2d) obj;
         if (this.x == that.x && this.y == that.y)
             return true;
         else
@@ -67,5 +69,13 @@ public class Vector2d
         int xNew = bottomLeft.x + (this.x - bottomLeft.x) % (topRight.x - bottomLeft.x + 1);
         int yNew = bottomLeft.y + (this.y - bottomLeft.y) % (topRight.y - bottomLeft.y + 1);
         return new Vector2d(xNew, yNew);
+    }
+
+    public int hashCode()
+    {
+        int hash = 13;
+        hash += this.x * 31;
+        hash += this.y * 17;
+        return hash;
     }
 }

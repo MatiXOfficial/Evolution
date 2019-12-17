@@ -1,10 +1,11 @@
 import java.util.Random;
 
-public class Animal extends AbstractMapElement
+public class Animal
 {
     private static int moveEnergy = 1;
-    private static int minStartEnergy = 4;
+    private static int minStartEnergy = 1;
 
+    private Vector2d position;
     private Orientation orientation;
     private int energy;
     private final int minBreedEnergy;
@@ -20,7 +21,7 @@ public class Animal extends AbstractMapElement
 
     private Animal(Vector2d position, int energy, Genotype genes, WorldMap map, Random generator)
     {
-        super(position);
+        this.position = position;
         if (energy < minStartEnergy)
             throw new IllegalArgumentException("Energy cannot be less than minStartEnergy - " + minStartEnergy);
         this.orientation = Orientation.randomOrientation(generator);
@@ -46,6 +47,21 @@ public class Animal extends AbstractMapElement
         this(position, energy, map, new Random());
     }
 
+    public Vector2d getPosition()
+    {
+        return this.position;
+    }
+
+    public int getEnergy()
+    {
+        return this.energy;
+    }
+
+    public boolean isDead()
+    {
+        return this.energy <= 0;
+    }
+
     public void eat(int energy)
     {
         this.energy += energy;
@@ -57,42 +73,37 @@ public class Animal extends AbstractMapElement
         moveForward();
     }
 
+    public void changePosition(Vector2d newPosition)
+    {
+        this.position = newPosition;
+    }
+
     public void loseEnergy()
     {
         this.energy -= moveEnergy;
     }
 
-    public Animal breed(Animal that)
+    public Animal breed(Animal that, Vector2d childPosition)
     {
+        if (this.position != that.position)
+            throw new IllegalArgumentException("Animals do not have the same position!");
+
         if (this.energy < this.minBreedEnergy || that.energy < that.minBreedEnergy)
             return null;
 
-        int childEnergy = (this.energy + 3) / 4 + (that.energy + 3) / 4; // Zaokrąglenie w górę
+        int childEnergy = this.energy / 4 + that.energy / 4;
         if (childEnergy < minStartEnergy)
             return null;
 
         this.energy -= this.energy / 4;
         that.energy -= that.energy / 4;
 
-        Vector2d childPosition;
-        if (map == null)
-            childPosition = new Vector2d(this.getPosition().x, this.getPosition().y);
-        else
-            childPosition = map.findChildPosition(this.position);
-
         return new Animal(childPosition, childEnergy, genes.createChildGenes(that.genes), this.map, generator);
     }
 
     private void moveForward()
     {
-        if (this.map == null)
-            this.position = this.position.add(this.orientation.toVector());
-        else
-        {
-            Vector2d oldPosition = position;
-            this.position = map.findPosition(this.position.add(this.orientation.toVector()));
-            map.updatePosition(this, oldPosition);
-        }
+        this.position = this.position.add(this.orientation.toVector());
     }
 
     private void randomRotate()
