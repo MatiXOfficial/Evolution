@@ -66,9 +66,18 @@ public class Vector2d
 
     public Vector2d updateWithBoundaries(Vector2d bottomLeft, Vector2d topRight)
     {
-        int xNew = bottomLeft.x + (this.x - bottomLeft.x) % (topRight.x - bottomLeft.x + 1);
-        int yNew = bottomLeft.y + (this.y - bottomLeft.y) % (topRight.y - bottomLeft.y + 1);
+        int dx = topRight.x - bottomLeft.x + 1, dy = topRight.y - bottomLeft.y + 1;
+        int xNew = bottomLeft.x + (this.x - bottomLeft.x + dx) % dx;
+        int yNew = bottomLeft.y + (this.y - bottomLeft.y + dy) % dy;
         return new Vector2d(xNew, yNew);
+    }
+
+    public static Vector2d randomWithBoundaries(Vector2d bottomLeft, Vector2d topRight, Random generator)
+    {
+        int dx = topRight.x - bottomLeft.x + 1, dy = topRight.y - bottomLeft.y + 1;
+        int x = generator.nextInt(dx) + bottomLeft.x;
+        int y = generator.nextInt(dy) + bottomLeft.y;
+        return new Vector2d(x, y);
     }
 
     public int hashCode()

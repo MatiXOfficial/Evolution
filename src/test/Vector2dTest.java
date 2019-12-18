@@ -59,4 +59,16 @@ public class Vector2dTest
         Assert.assertEquals(new Vector2d(0, 0), new Vector2d(0, 0).opposite());
         Assert.assertEquals(new Vector2d(-1, -1), new Vector2d(1, 1).opposite());
     }
+
+    @Test
+    public void testUpdateWithBoundaries()
+    {
+        Assert.assertEquals(new Vector2d(5, 6), new Vector2d(5, 6).updateWithBoundaries(new Vector2d(2, 2), new Vector2d(7, 8)));
+        Assert.assertEquals(new Vector2d(2, 2), new Vector2d(13, 13).updateWithBoundaries(new Vector2d(2, 2), new Vector2d(12, 12)));
+        Assert.assertEquals(new Vector2d(12, 12), new Vector2d(1, 1).updateWithBoundaries(new Vector2d(2, 2), new Vector2d(12, 12)));
+        Assert.assertEquals(new Vector2d(2, 8), new Vector2d(8, 8).updateWithBoundaries(new Vector2d(2, 1), new Vector2d(7, 10)));
+        Assert.assertEquals(new Vector2d(14, 3), new Vector2d(10, 3).updateWithBoundaries(new Vector2d(11, -1), new Vector2d(14, 5)));
+        Assert.assertEquals(new Vector2d(2, -5), new Vector2d(2, -13).updateWithBoundaries(new Vector2d(0, -12), new Vector2d(16, -5)));
+        Assert.assertEquals(new Vector2d(5, 10), new Vector2d(5, -1).updateWithBoundaries(new Vector2d(0, 0), new Vector2d(10, 10)));
+    }
 }

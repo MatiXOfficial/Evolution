@@ -12,8 +12,11 @@ public class Genotype
         this.generator = generator;
         this.genes = new int[32];
         if (generate)
+        {
             for (int i = 0; i < genesNumber; i++)
                 this.genes[i] = generator.nextInt(8) + 1;
+            this.mutate();
+        }
     }
 
     public Genotype(Random generator)
@@ -59,24 +62,33 @@ public class Genotype
                 System.arraycopy(that.genes, pos[k], childGenes.genes, pos[k], pos[k + 1] - pos[k]);
             }
         }
+        mutate(childGenes);
+        return childGenes;
+    }
 
+    private void mutate(Genotype genotype)
+    {
         int[] genesCount = new int[8];
         for (int k = 0; k < genesNumber; k++)
-            genesCount[childGenes.genes[k] - 1]++;
+            genesCount[genotype.genes[k] - 1]++;
 
         for (int k = 0; k < 8; k++)
             if (genesCount[k] == 0)
                 while(true)
                 {
                     int l = generator.nextInt(genesNumber);
-                    if (genesCount[childGenes.genes[l] - 1] > 1)
+                    if (genesCount[genotype.genes[l] - 1] > 1)
                     {
-                        genesCount[childGenes.genes[k] - 1] ++;
-                        genesCount[childGenes.genes[l] - 1] --;
-                        childGenes.genes[l] = k + 1;
+                        genesCount[genotype.genes[k] - 1] ++;
+                        genesCount[genotype.genes[l] - 1] --;
+                        genotype.genes[l] = k + 1;
                         break;
                     }
                 }
-        return childGenes;
+    }
+
+    private void mutate()
+    {
+        mutate(this);
     }
 }

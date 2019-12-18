@@ -1,14 +1,19 @@
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 public class AnimalsHashMap
 {
     private HashMap<Vector2d, LinkedList<Animal>> animals;
+    private Random generator;
 
-    public AnimalsHashMap()
+    public AnimalsHashMap(Random generator)
     {
         this.animals = new HashMap<>();
+        this.generator = generator;
+    }
+
+    public boolean isFree(Vector2d position)
+    {
+        return animals.get(position) == null;
     }
 
     public LinkedList<Animal> getAllAnimals()
@@ -22,8 +27,21 @@ public class AnimalsHashMap
         return result;
     }
 
+    public Set<Vector2d> getAllPositions()
+    {
+        return this.animals.keySet();
+    }
+
+    public LinkedList<Animal> getAnimalsAtPosition(Vector2d position)
+    {
+        return this.animals.get(position);
+    }
+
     public void addAnimal(Animal animal)
     {
+        if (animal == null)
+            throw new IllegalArgumentException("Argument cannot be null!");
+
         if (this.animals.get(animal.getPosition()) == null)
             this.animals.put(animal.getPosition(), new LinkedList<Animal>());
         this.animals.get(animal.getPosition()).add(animal);
@@ -33,8 +51,13 @@ public class AnimalsHashMap
     {
         if (animal == null)
             throw new IllegalArgumentException("Argument cannot be null!");
+
         if (this.animals.get(animal.getPosition()) != null)
+        {
             this.animals.get(animal.getPosition()).remove(animal);
+            if (this.animals.get(animal.getPosition()).size() == 0)
+                this.animals.put(animal.getPosition(), null);
+        }
     }
 
     public LinkedList<Animal> getAnimalsToEat(Vector2d position)
@@ -64,19 +87,40 @@ public class AnimalsHashMap
         if (animalsList == null || animalsList.size() == 1)
             return null;
 
-        int maxIdx1 = 0, maxIdx2 = 0;
-        for (int i = 0; i < animalsList.size(); i++)
+        int maxIdx1 = 0, maxIdx2 = 1;
+        if (animalsList.get(maxIdx1).getEnergy() < animalsList.get(maxIdx2).getEnergy())
+        {
+            int tmp = maxIdx1;
+            maxIdx1 = maxIdx2;
+            maxIdx2 = tmp;
+        }
+
+        for (int i = 2; i < animalsList.size(); i++)
         {
             if (animalsList.get(i).getEnergy() > animalsList.get(maxIdx1).getEnergy())
             {
-                maxIdx2 = maxIdx1;
-                if (animalsList.get(i).getEnergy() > animalsList.get(maxIdx2).getEnergy())
+                if (animalsList.get(maxIdx1).getEnergy() > animalsList.get(maxIdx2).getEnergy() || generator.nextInt(2) == 0)
+                    maxIdx2 = maxIdx1;
                 maxIdx1 = i;
             }
-            else if (animalsList.get(i).getEnergy() > animalsList.get(maxIdx2).getEnergy())
+            else if (animalsList.get(i).getEnergy() == animalsList.get(maxIdx1).getEnergy())
             {
-                maxIdx2 = i;
+                if (generator.nextInt(2) == 0)
+                {
+                    if (animalsList.get(maxIdx1).getEnergy() > animalsList.get(maxIdx2).getEnergy() || generator.nextInt(2) == 0)
+                        maxIdx2 = maxIdx1;
+                    maxIdx1 = i;
+                }
+                else if (animalsList.get(maxIdx1).getEnergy() > animalsList.get(maxIdx2).getEnergy() || generator.nextInt(2) == 0)
+                    maxIdx2 = i;
             }
+            else if (animalsList.get(i).getEnergy() > animalsList.get(maxIdx2).getEnergy())
+                maxIdx2 = i;
+            else if (animalsList.get(i).getEnergy() == animalsList.get(maxIdx2).getEnergy() && generator.nextInt(2) == 0)
+                maxIdx2 = i;
+            System.out.print(i + " ");
+            System.out.print(maxIdx1 + " ");
+            System.out.println(maxIdx2);
         }
 
         LinkedList<Animal> result = new LinkedList<>();
@@ -87,7 +131,14 @@ public class AnimalsHashMap
 
     public void updatePosition(Vector2d oldPosition, Animal animal)
     {
+        if (animal == null)
+            throw new IllegalArgumentException("Argument cannot be null!");
+
+        if (this.animals.get(oldPosition) == null)
+            return;
         this.animals.get(oldPosition).remove(animal);
+        if (this.animals.get(oldPosition).size() == 0)
+            this.animals.put(oldPosition, null);
         this.addAnimal(animal);
     }
 }

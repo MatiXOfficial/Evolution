@@ -78,9 +78,14 @@ public class Animal
         this.position = newPosition;
     }
 
-    public void loseEnergy()
+    public void loseMoveEnergy()
     {
         this.energy -= moveEnergy;
+    }
+
+    public void increaseEnergy(int energy)
+    {
+        this.energy += energy;
     }
 
     public Animal breed(Animal that, Vector2d childPosition)
@@ -99,6 +104,11 @@ public class Animal
         that.energy -= that.energy / 4;
 
         return new Animal(childPosition, childEnergy, genes.createChildGenes(that.genes), this.map, generator);
+    }
+
+    public void updatePositionWithBoundaries(Vector2d bottomLeft, Vector2d topRight)
+    {
+        this.position.updateWithBoundaries(bottomLeft, topRight);
     }
 
     private void moveForward()

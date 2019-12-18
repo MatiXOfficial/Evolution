@@ -1,6 +1,4 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class WorldMap
 {
@@ -14,7 +12,7 @@ public class WorldMap
     private Vector2d jungleTopRight;
 
     private AnimalsHashMap animalsHashMap;
-    private HashMap<Vector2d, Boolean> plantsMap;
+    private HashSet<Vector2d> plantsSet;
 
     private Random generator;
 
@@ -29,8 +27,8 @@ public class WorldMap
         this.jungleBottomLeft = jungleBottomLeft;
         this.jungleTopRight = jungleTopRight;
 
-        this.animalsHashMap = new AnimalsHashMap();
-        this.plantsMap = new HashMap<>();
+        this.animalsHashMap = new AnimalsHashMap(generator);
+        this.plantsSet = new HashSet<>();
 
         this.generator = generator;
     }
@@ -39,27 +37,56 @@ public class WorldMap
     {
         this(startEnergy, plantEnergy, moveEnergy, bottomLeft, topRight, jungleBottomLeft, jungleTopRight, generator);
         for (int i = 0; i < firstAnimals; i++);
-            //animalsHashMap.addAnimal(new Animal(this.findAvailablePosition()));
+            animalsHashMap.addAnimal(new Animal(this.findAvailablePosition(), startEnergy, this, generator));
+    }
+
+    public void daySimulation()
+    {
+        clearPhase();
+        movePhase();
+        eatPhase();
+        breedPhase();
+        newPlantsPhase();
     }
 
     public void clearPhase()
     {
-
+        LinkedList<Animal> animals = animalsHashMap.getAllAnimals();
+        for (Animal animal : animals)
+        {
+            if (animal.isDead())
+                animalsHashMap.removeAnimal(animal);
+        }
     }
 
     public void movePhase()
     {
-
+        LinkedList<Animal> animals = animalsHashMap.getAllAnimals();
+        for (Animal animal : animals)
+        {
+            animal.move();
+            animal.updatePositionWithBoundaries(bottomLeft, topRight);
+        }
     }
 
     public void eatPhase()
     {
-
+        for (Vector2d position : plantsSet)
+        {
+            LinkedList<Animal> animalsToEat = animalsHashMap.getAnimalsToEat(position);
+            if (animalsToEat != null)
+                this.eat(animalsToEat);
+        }
     }
 
     public void breedPhase()
     {
-
+        for (Vector2d position : animalsHashMap.getAllPositions())
+        {
+            LinkedList<Animal> animalsToBreed = animalsHashMap.getAnimalsToBreed(position);
+            if (animalsToBreed != null)
+                this.breed(animalsToBreed.get(0), animalsToBreed.get(1));
+        }
     }
 
     public void newPlantsPhase()
@@ -67,8 +94,64 @@ public class WorldMap
 
     }
 
-    /*private Vector2d findAvailablePosition()
+    private Vector2d findAvailablePosition()
     {
+        Vector2d position = Vector2d.randomWithBoundaries(bottomLeft, topRight, generator);
+        while(!this.isFree(position))
+            position = Vector2d.randomWithBoundaries(bottomLeft, topRight, generator);
+        return position;
+    }
 
-    }*/
+    private Vector2d findAvailablePosition(int n)
+    {
+        Vector2d position;
+        for (int i = 0; i < n; i++)
+        {
+            position = Vector2d.randomWithBoundaries(bottomLeft, topRight, generator);
+            if (this.isFree(position))
+                return position;
+        }
+        return null;
+    }
+
+    private boolean isFree(Vector2d position)
+    {
+        return animalsHashMap.isFree(position) && plantsSet.contains(position);
+    }
+
+    private void eat(LinkedList<Animal> animalsToEat)
+    {
+        int energy = plantEnergy / animalsToEat.size();
+        for (Animal animal : animalsToEat)
+        {
+            animal.increaseEnergy(energy);
+        }
+    }
+
+    private void breed(Animal father, Animal mother)
+    {
+        Vector2d parentsPosition = father.getPosition();
+        Vector2d childPosition = findBreedPosition(parentsPosition);
+        animalsHashMap.addAnimal(father.breed(mother, childPosition));
+    }
+
+    private Vector2d findBreedPosition(Vector2d parentsPosition)
+    {
+        LinkedList<Vector2d> dirs = new LinkedList<>();
+        for (Orientation orientation : Orientation.values())
+            dirs.add(orientation.toVector());
+
+        while(!dirs.isEmpty())
+        {
+            int i = generator.nextInt(dirs.size());
+            Vector2d childPosition = dirs.get(i);
+            if (isFree(childPosition))
+                return childPosition;
+            dirs.remove(i);
+        }
+
+        for (Orientation orientation : Orientation.values())
+            dirs.add(orientation.toVector());
+        return dirs.get(generator.nextInt(dirs.size()));
+    }
 }
