@@ -43,10 +43,7 @@ public class Vector2d
         if (!(obj instanceof Vector2d))
             return false;
         Vector2d that = (Vector2d) obj;
-        if (this.x == that.x && this.y == that.y)
-            return true;
-        else
-            return false;
+        return this.x == that.x && this.y == that.y;
     }
 
     public boolean precedes(Vector2d that)

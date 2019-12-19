@@ -28,16 +28,6 @@ public class Vector2dTest
         Assert.assertEquals(new Vector2d(5, -3), new Vector2d(2, 4).subtract(new Vector2d(-3, 7)));
     }
 
-    @Test public void testEquals()
-    {
-        Vector2d obj = new Vector2d(1, 10);
-        Vector2d obj2 = obj;
-        Assert.assertTrue(obj.equals(obj2));
-        Assert.assertFalse(obj.equals(new Object()));
-        Assert.assertTrue(obj.equals(new Vector2d(1, 10)));
-        Assert.assertFalse(obj.equals(new Vector2d(2, 9)));
-    }
-
     @Test public void testPrecedes()
     {
         Assert.assertTrue(new Vector2d(3, 4).precedes(new Vector2d(3, 4)));

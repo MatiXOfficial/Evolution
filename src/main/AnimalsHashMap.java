@@ -43,7 +43,7 @@ public class AnimalsHashMap
             throw new IllegalArgumentException("Argument cannot be null!");
 
         if (this.animals.get(animal.getPosition()) == null)
-            this.animals.put(animal.getPosition(), new LinkedList<Animal>());
+            this.animals.put(animal.getPosition(), new LinkedList<>());
         this.animals.get(animal.getPosition()).add(animal);
     }
 
@@ -67,10 +67,9 @@ public class AnimalsHashMap
             return null;
 
         int maxEnergy = 0;
-        for (int i = 0; i < animalsList.size(); i++) {
-            if (animalsList.get(i).getEnergy() > maxEnergy)
-                maxEnergy = animalsList.get(i).getEnergy();
-        }
+        for (Animal animal : animalsList)
+            if (animal.getEnergy() > maxEnergy)
+                maxEnergy = animal.getEnergy();
 
         LinkedList<Animal> result = new LinkedList<>();
         for (Animal animal : animalsList)

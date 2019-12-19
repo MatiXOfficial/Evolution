@@ -36,7 +36,7 @@ public class WorldMap
     public WorldMap(int startEnergy, int plantEnergy, int moveEnergy, Vector2d bottomLeft, Vector2d topRight, Vector2d jungleBottomLeft, Vector2d jungleTopRight, Random generator, int firstAnimals)
     {
         this(startEnergy, plantEnergy, moveEnergy, bottomLeft, topRight, jungleBottomLeft, jungleTopRight, generator);
-        for (int i = 0; i < firstAnimals; i++);
+        for (int i = 0; i < firstAnimals; i++)
             animalsHashMap.addAnimal(new Animal(this.findAvailablePosition(), startEnergy, this, generator));
     }
 
@@ -49,7 +49,7 @@ public class WorldMap
         newPlantsPhase();
     }
 
-    public void clearPhase()
+    private void clearPhase()
     {
         LinkedList<Animal> animals = animalsHashMap.getAllAnimals();
         for (Animal animal : animals)
@@ -59,7 +59,7 @@ public class WorldMap
         }
     }
 
-    public void movePhase()
+    private void movePhase()
     {
         LinkedList<Animal> animals = animalsHashMap.getAllAnimals();
         for (Animal animal : animals)
@@ -69,7 +69,7 @@ public class WorldMap
         }
     }
 
-    public void eatPhase()
+    private void eatPhase()
     {
         for (Vector2d position : plantsSet)
         {
@@ -79,7 +79,7 @@ public class WorldMap
         }
     }
 
-    public void breedPhase()
+    private void breedPhase()
     {
         for (Vector2d position : animalsHashMap.getAllPositions())
         {
@@ -89,7 +89,7 @@ public class WorldMap
         }
     }
 
-    public void newPlantsPhase()
+    private void newPlantsPhase()
     {
 
     }

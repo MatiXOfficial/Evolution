@@ -14,8 +14,8 @@ public enum Orientation
 
     public Vector2d toVector()
     {
-        int xTab[] = new int[] {0, 1, 1, 1, 0, -1, -1, -1};
-        int yTab[] = new int[] {1, 1, 0, -1, -1, -1, 0, 1};
+        int [] xTab = new int[] {0, 1, 1, 1, 0, -1, -1, -1};
+        int [] yTab = new int[] {1, 1, 0, -1, -1, -1, 0, 1};
         return new Vector2d(xTab[this.ordinal()], yTab[this.ordinal()]);
     }
 
