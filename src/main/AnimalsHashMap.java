@@ -13,7 +13,7 @@ public class AnimalsHashMap
 
     public boolean isFree(Vector2d position)
     {
-        return animals.get(position) == null;
+        return !animals.containsKey(position);
     }
 
     public LinkedList<Animal> getAllAnimals()
@@ -32,40 +32,29 @@ public class AnimalsHashMap
         return this.animals.keySet();
     }
 
-    public LinkedList<Animal> getAnimalsAtPosition(Vector2d position)
-    {
-        return this.animals.get(position);
-    }
-
     public void addAnimal(Animal animal)
     {
-        if (animal == null)
-            throw new IllegalArgumentException("Argument cannot be null!");
-
-        if (this.animals.get(animal.getPosition()) == null)
+        if (!this.animals.containsKey(animal.getPosition()))
             this.animals.put(animal.getPosition(), new LinkedList<>());
         this.animals.get(animal.getPosition()).add(animal);
     }
 
     public void removeAnimal(Animal animal)
     {
-        if (animal == null)
-            throw new IllegalArgumentException("Argument cannot be null!");
-
-        if (this.animals.get(animal.getPosition()) != null)
+        if (this.animals.containsKey(animal.getPosition()))
         {
             this.animals.get(animal.getPosition()).remove(animal);
             if (this.animals.get(animal.getPosition()).size() == 0)
-                this.animals.put(animal.getPosition(), null);
+                this.animals.remove(animal.getPosition());
         }
     }
 
     public LinkedList<Animal> getAnimalsToEat(Vector2d position)
     {
-        LinkedList<Animal> animalsList = this.animals.get(position);
-        if (animalsList == null)
+        if (!this.animals.containsKey(position))
             return null;
 
+        LinkedList<Animal> animalsList = this.animals.get(position);
         int maxEnergy = 0;
         for (Animal animal : animalsList)
             if (animal.getEnergy() > maxEnergy)
@@ -82,8 +71,11 @@ public class AnimalsHashMap
 
     public LinkedList<Animal> getAnimalsToBreed(Vector2d position)
     {
+        if (!this.animals.containsKey(position))
+            return null;
+
         LinkedList<Animal> animalsList = this.animals.get(position);
-        if (animalsList == null || animalsList.size() == 1)
+        if (animalsList.size() == 1)
             return null;
 
         int maxIdx1 = 0, maxIdx2 = 1;
@@ -117,9 +109,6 @@ public class AnimalsHashMap
                 maxIdx2 = i;
             else if (animalsList.get(i).getEnergy() == animalsList.get(maxIdx2).getEnergy() && generator.nextInt(2) == 0)
                 maxIdx2 = i;
-            System.out.print(i + " ");
-            System.out.print(maxIdx1 + " ");
-            System.out.println(maxIdx2);
         }
 
         LinkedList<Animal> result = new LinkedList<>();
@@ -130,14 +119,11 @@ public class AnimalsHashMap
 
     public void updatePosition(Vector2d oldPosition, Animal animal)
     {
-        if (animal == null)
-            throw new IllegalArgumentException("Argument cannot be null!");
-
-        if (this.animals.get(oldPosition) == null)
+        if (!this.animals.containsKey(oldPosition))
             return;
         this.animals.get(oldPosition).remove(animal);
         if (this.animals.get(oldPosition).size() == 0)
-            this.animals.put(oldPosition, null);
+            this.animals.remove(oldPosition);
         this.addAnimal(animal);
     }
 }

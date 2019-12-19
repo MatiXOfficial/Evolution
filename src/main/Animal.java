@@ -62,25 +62,16 @@ public class Animal
         return this.energy <= 0;
     }
 
-    public void eat(int energy)
-    {
-        this.energy += energy;
-    }
-
     public void move()
     {
         randomRotate();
         moveForward();
+        loseMoveEnergy();
     }
 
     public void changePosition(Vector2d newPosition)
     {
         this.position = newPosition;
-    }
-
-    public void loseMoveEnergy()
-    {
-        this.energy -= moveEnergy;
     }
 
     public void increaseEnergy(int energy)
@@ -90,7 +81,7 @@ public class Animal
 
     public Animal breed(Animal that, Vector2d childPosition)
     {
-        if (this.position != that.position)
+        if (!this.position.equals(that.position))
             throw new IllegalArgumentException("Animals do not have the same position!");
 
         if (this.energy < this.minBreedEnergy || that.energy < that.minBreedEnergy)
@@ -109,6 +100,11 @@ public class Animal
     public void updatePositionWithBoundaries(Vector2d bottomLeft, Vector2d topRight)
     {
         this.position.updateWithBoundaries(bottomLeft, topRight);
+    }
+
+    private void loseMoveEnergy()
+    {
+        this.energy -= moveEnergy;
     }
 
     private void moveForward()
