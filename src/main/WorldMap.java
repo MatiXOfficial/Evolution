@@ -2,14 +2,13 @@ import java.util.*;
 
 public class WorldMap
 {
-    private int startEnergy;
-    private int plantEnergy;
-    private int moveEnergy;
+    private final int startEnergy;
+    private final int plantEnergy;
 
-    private Vector2d bottomLeft;
-    private Vector2d topRight;
-    private Vector2d jungleBottomLeft;
-    private Vector2d jungleTopRight;
+    private final Vector2d bottomLeft;
+    private final Vector2d topRight;
+    private final Vector2d jungleBottomLeft;
+    private final Vector2d jungleTopRight;
 
     private AnimalsHashMap animalsHashMap;
     private HashSet<Vector2d> plantsSet;
@@ -17,18 +16,22 @@ public class WorldMap
     private HashSet<Vector2d> steppeFreePositions;
     private HashSet<Vector2d> jungleFreePositions;
 
-    private Random generator;
+    private final Random generator;
 
     private WorldMap(int startEnergy, int plantEnergy, int moveEnergy, Vector2d bottomLeft, Vector2d topRight, Vector2d jungleBottomLeft, Vector2d jungleTopRight, Random generator)
     {
+        if (startEnergy < 1 || plantEnergy < 1 || moveEnergy < 0)
+            throw new IllegalArgumentException("To small energy");
         this.startEnergy = startEnergy;
         this.plantEnergy = plantEnergy;
-        this.moveEnergy = moveEnergy;
+        Animal.setMoveEnergy(moveEnergy);
 
         this.bottomLeft = bottomLeft;
         this.topRight = topRight;
         this.jungleBottomLeft = jungleBottomLeft;
         this.jungleTopRight = jungleTopRight;
+        if (!bottomLeft.precedes(topRight) || !jungleBottomLeft.precedes(jungleTopRight))
+            throw new IllegalArgumentException("Wrong corners");
 
         this.animalsHashMap = new AnimalsHashMap(generator);
         this.plantsSet = new HashSet<>();
@@ -50,14 +53,58 @@ public class WorldMap
         this.generator = generator;
     }
 
-    public WorldMap(int startEnergy, int plantEnergy, int moveEnergy, Vector2d bottomLeft, Vector2d topRight, Vector2d jungleBottomLeft, Vector2d jungleTopRight, Random generator, int firstAnimals)
+    private WorldMap(int startEnergy, int plantEnergy, int moveEnergy, Vector2d bottomLeft, Vector2d topRight, Vector2d jungleBottomLeft, Vector2d jungleTopRight, Random generator, int firstAnimals)
     {
         this(startEnergy, plantEnergy, moveEnergy, bottomLeft, topRight, jungleBottomLeft, jungleTopRight, generator);
+        if (firstAnimals > (getWidth()) * (getHeight()))
+            throw new IllegalArgumentException("Too many startAnimals");
         for (int i = 0; i < firstAnimals; i++)
             this.addAnimal(new Animal(this.findAvailablePosition(), startEnergy, this, generator));
     }
 
-    private void daySimulation()
+    public WorldMap(int width, int height, int startEnergy, int moveEnergy, int plantEnergy, double jungleRatio, int firstAnimals)
+    {
+        this(startEnergy, plantEnergy, moveEnergy, new Vector2d(0, 0), new Vector2d(width - 1, height - 1),
+                new Vector2d((int)(width - width * jungleRatio)/2, (int)(height - height * jungleRatio)/2), new Vector2d((int)(width + width * jungleRatio)/2, (int)(height + height * jungleRatio)/2),
+                new Random(), firstAnimals);
+    }
+
+    public Vector2d getBottomLeft()
+    {
+        return bottomLeft;
+    }
+
+    public Vector2d getJungleBottomLeft()
+    {
+        return jungleBottomLeft;
+    }
+
+    public int getWidth()
+    {
+        return topRight.x - bottomLeft.x + 1;
+    }
+
+    public int getHeight()
+    {
+        return topRight.y - bottomLeft.y + 1;
+    }
+
+    public int getJungleWidth()
+    {
+        return jungleTopRight.x - jungleBottomLeft.x + 1;
+    }
+
+    public int getJungleHeight()
+    {
+        return jungleTopRight.y - jungleBottomLeft.y + 1;
+    }
+
+    public int getStartEnergy()
+    {
+        return startEnergy;
+    }
+
+    public void daySimulation()
     {
         clearPhase();
         movePhase();
@@ -70,6 +117,19 @@ public class WorldMap
     {
         for (int i = 0; i < n; i++)
             daySimulation();
+    }
+
+    public LinkedList<Animal> getAnimalsToVisualization()
+    {
+        return animalsHashMap.getAnimalsToVisualization();
+    }
+
+    public LinkedList<Vector2d> getPlantsToVisualization()
+    {
+        LinkedList<Vector2d> result = new LinkedList<>();
+        for (Vector2d position : plantsSet)
+            result.add(position);
+        return result;
     }
 
     private void clearPhase()
@@ -202,7 +262,7 @@ public class WorldMap
         while(!dirs.isEmpty())
         {
             int i = generator.nextInt(dirs.size());
-            Vector2d childPosition = dirs.get(i);
+            Vector2d childPosition = dirs.get(i).updateWithBoundaries(bottomLeft, topRight);
             if (isFree(childPosition))
                 return childPosition;
             dirs.remove(i);
@@ -210,7 +270,7 @@ public class WorldMap
 
         for (Orientation orientation : Orientation.values())
             dirs.add(orientation.toVector());
-        return dirs.get(generator.nextInt(dirs.size()));
+        return dirs.get(generator.nextInt(dirs.size())).updateWithBoundaries(bottomLeft, topRight);
     }
 
     private boolean isInJungle(Vector2d position)

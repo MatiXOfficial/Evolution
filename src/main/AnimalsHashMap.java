@@ -18,9 +18,8 @@ public class AnimalsHashMap
 
     public LinkedList<Animal> getAllAnimals()
     {
-        Collection<LinkedList<Animal>> animalsLists = this.animals.values();
         LinkedList<Animal> result = new LinkedList<>();
-        for (LinkedList<Animal> animalsList : animalsLists)
+        for (LinkedList<Animal> animalsList : this.animals.values())
         {
             result.addAll(animalsList);
         }
@@ -125,5 +124,19 @@ public class AnimalsHashMap
         if (this.animals.get(oldPosition).size() == 0)
             this.animals.remove(oldPosition);
         this.addAnimal(animal);
+    }
+
+    public LinkedList<Animal> getAnimalsToVisualization()
+    {
+        LinkedList<Animal> result = new LinkedList<>();
+        for (LinkedList<Animal> animalsList : this.animals.values())
+        {
+            int maxIdx = 0;
+            for (int i = 1; i < animalsList.size(); i++)
+                if (animalsList.get(i).getEnergy() > animalsList.get(maxIdx).getEnergy())
+                    maxIdx = i;
+            result.add(animalsList.get(maxIdx));
+        }
+        return result;
     }
 }

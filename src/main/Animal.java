@@ -99,7 +99,7 @@ public class Animal
 
     public void updatePositionWithBoundaries(Vector2d bottomLeft, Vector2d topRight)
     {
-        this.position.updateWithBoundaries(bottomLeft, topRight);
+        this.position = this.position.updateWithBoundaries(bottomLeft, topRight);
     }
 
     private void loseMoveEnergy()
