@@ -4,11 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Integer.max;
+
 public class VisualizationFrame extends JFrame implements ActionListener
 {
     private WorldMap map;
     private JButton startButton;
     private JButton stopButton;
+    private JButton nextDayButton;
     private MapPanel mapPanel;
     private Timer timer;
     private int delay;
@@ -16,6 +19,11 @@ public class VisualizationFrame extends JFrame implements ActionListener
     public VisualizationFrame(WorldMap map, int delay)
     {
         super("Symulacja świata zwierząt");
+        setLocation(300, 90);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
+        setLayout(null);
+
         this.map = map;
         this.delay = delay;
         int mapWidth = map.getWidth();
@@ -36,11 +44,7 @@ public class VisualizationFrame extends JFrame implements ActionListener
         width += 20;
         height += 100;
 
-        setSize(width, height);
-        setLocation(300, 90);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setResizable(false);
-        setLayout(null);
+        setSize(max((int)((height - 90) / ratio), 450), height);
 
         startButton = new JButton("Start");
         startButton.setSize(100, 40);
@@ -53,6 +57,12 @@ public class VisualizationFrame extends JFrame implements ActionListener
         stopButton.setLocation(120, height - 90);
         stopButton.addActionListener(this);
         add(stopButton);
+
+        nextDayButton = new JButton("+Dzień");
+        nextDayButton.setSize(100, 40);
+        nextDayButton.setLocation(230, height - 90);
+        nextDayButton.addActionListener(this);
+        add(nextDayButton);
 
         mapPanel = new MapPanel(width - 40, height - 120, map);
         mapPanel.setSize(width - 20, height - 100);
@@ -79,9 +89,13 @@ public class VisualizationFrame extends JFrame implements ActionListener
         {
             timer.restart();
         }
-        else
+        else if (source == stopButton)
         {
             timer.stop();
+        }
+        else
+        {
+            simulateDay();
         }
     }
 

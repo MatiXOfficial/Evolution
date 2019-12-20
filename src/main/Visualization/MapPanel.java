@@ -28,16 +28,17 @@ public class MapPanel extends JPanel
         g2d.setPaint(new Color(179, 255, 179));
         g2d.fill(steppe);
 
-        double mult = (double)this.width / map.getWidth();
-        Rectangle2D jungle = new Rectangle2D.Double((map.getJungleBottomLeft().x - map.getBottomLeft().x) * mult, (map.getJungleBottomLeft().y - map.getBottomLeft().y) * mult,
-                                                    map.getJungleWidth() * mult, map.getJungleHeight() * mult);
+        double multHeight = (double)this.height / map.getHeight();
+        double multWidth = (double)this.width / map.getWidth();
+        Rectangle2D jungle = new Rectangle2D.Double((map.getJungleBottomLeft().x - map.getBottomLeft().x) * multWidth, (map.getJungleBottomLeft().y - map.getBottomLeft().y) * multHeight,
+                                                    map.getJungleWidth() * multWidth, map.getJungleHeight() * multHeight);
         g2d.setPaint(new Color(0, 51, 0));
         g2d.fill(jungle);
 
         g2d.setPaint(new Color(0, 255, 0));
         for (Vector2d position : map.getPlantsToVisualization())
         {
-            Rectangle2D grass = new Rectangle2D.Double((position.x - map.getBottomLeft().x) * mult, (position.y - map.getBottomLeft().y) * mult, mult, mult);
+            Rectangle2D grass = new Rectangle2D.Double((position.x - map.getBottomLeft().x) * multWidth, (position.y - map.getBottomLeft().y) * multHeight, multWidth, multHeight);
             g2d.fill(grass);
         }
 
@@ -52,7 +53,7 @@ public class MapPanel extends JPanel
             else
                 g2d.setPaint(new Color(0, 0, 255));
             Vector2d position = animal.getPosition();
-            Ellipse2D circle = new Ellipse2D.Double((position.x - map.getBottomLeft().x) * mult, (position.y - map.getBottomLeft().y) * mult, mult, mult);
+            Ellipse2D circle = new Ellipse2D.Double((position.x - map.getBottomLeft().x) * multWidth, (position.y - map.getBottomLeft().y) * multHeight, multWidth, multHeight);
             g2d.fill(circle);
         }
     }
