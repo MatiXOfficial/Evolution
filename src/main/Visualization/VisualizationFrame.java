@@ -33,12 +33,12 @@ public class VisualizationFrame extends JFrame implements ActionListener
         int height, width;
         if (mapHeight < mapWidth)
         {
-            width = 800;
+            width = 600;
             height = (int)(ratio * width);
         }
         else
         {
-            height = 800;
+            height = 600;
             width = (int)(height / ratio);
         }
         width += 20;
