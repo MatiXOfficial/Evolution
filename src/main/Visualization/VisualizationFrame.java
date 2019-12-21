@@ -1,17 +1,16 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.TimeUnit;
 
-import static java.lang.Integer.max;
+import static java.lang.Integer.*;
 
 public class VisualizationFrame extends JFrame implements ActionListener
 {
     private WorldMap map;
-    private JButton startButton;
-    private JButton stopButton;
+    private JButton startStopButton;
     private JButton nextDayButton;
+    private JButton fasterButton;
+    private JButton slowerButton;
     private MapPanel mapPanel;
     private Timer timer;
     private int delay;
@@ -46,37 +45,37 @@ public class VisualizationFrame extends JFrame implements ActionListener
 
         setSize(max((int)((height - 90) / ratio), 450), height);
 
-        startButton = new JButton("Start");
-        startButton.setSize(100, 40);
-        startButton.setLocation(10, height - 90);
-        startButton.addActionListener(this);
-        add(startButton);
-
-        stopButton = new JButton("Stop");
-        stopButton.setSize(100, 40);
-        stopButton.setLocation(120, height - 90);
-        stopButton.addActionListener(this);
-        add(stopButton);
+        startStopButton = new JButton("Start/Stop");
+        startStopButton.setSize(100, 40);
+        startStopButton.setLocation(10, height - 90);
+        startStopButton.addActionListener(this);
+        add(startStopButton);
 
         nextDayButton = new JButton("+Dzień");
         nextDayButton.setSize(100, 40);
-        nextDayButton.setLocation(230, height - 90);
+        nextDayButton.setLocation(120, height - 90);
         nextDayButton.addActionListener(this);
         add(nextDayButton);
+
+        fasterButton = new JButton("+");
+        fasterButton.setSize(50, 40);
+        fasterButton.setLocation(230, height - 90);
+        fasterButton.addActionListener(this);
+        add(fasterButton);
+
+        slowerButton = new JButton("-");
+        slowerButton.setSize(50, 40);
+        slowerButton.setLocation(290, height - 90);
+        slowerButton.addActionListener(this);
+        add(slowerButton);
 
         mapPanel = new MapPanel(width - 40, height - 120, map);
         mapPanel.setSize(width - 20, height - 100);
         mapPanel.setLocation(10, 10);
+        mapPanel.setTresholdEnergy((map.getStartEnergy() + map.getPlantEnergy()) / 2);
         add(mapPanel);
 
-        timer = new Timer(delay, e -> {
-            Object source = e.getSource();
-            simulateDay();
-            if (source == stopButton)
-            {
-                timer.stop();
-            }
-        });
+        timer = new Timer(delay, e -> simulateDay());
 
         setVisible(true);
     }
@@ -85,17 +84,25 @@ public class VisualizationFrame extends JFrame implements ActionListener
     public void actionPerformed(ActionEvent e)
     {
         Object source = e.getSource();
-        if (source == startButton)
+        if (source == startStopButton)
+        {
+            if (timer.isRunning())
+                timer.stop();
+            else
+                timer.restart();
+        }
+        else if (source == nextDayButton)
+        {
+            simulateDay();
+        }
+        else if (source == fasterButton)
         {
             timer.restart();
-        }
-        else if (source == stopButton)
-        {
-            timer.stop();
+            timer.setDelay(Math.max(timer.getDelay() / 2, 1));
         }
         else
         {
-            simulateDay();
+            timer.setDelay(Math.min(timer.getDelay() * 2, MAX_VALUE / 2));
         }
     }
 

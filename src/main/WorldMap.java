@@ -104,6 +104,11 @@ public class WorldMap
         return startEnergy;
     }
 
+    public int getPlantEnergy()
+    {
+        return plantEnergy;
+    }
+
     public void daySimulation()
     {
         clearPhase();
@@ -111,12 +116,6 @@ public class WorldMap
         eatPhase();
         breedPhase();
         newPlantsPhase();
-    }
-
-    public void daysSimulation(int n)
-    {
-        for (int i = 0; i < n; i++)
-            daySimulation();
     }
 
     public LinkedList<Animal> getAnimalsToVisualization()
@@ -255,22 +254,22 @@ public class WorldMap
 
     private Vector2d findBreedPosition(Vector2d parentsPosition)
     {
-        LinkedList<Vector2d> dirs = new LinkedList<>();
+        LinkedList<Vector2d> positions = new LinkedList<>();
         for (Orientation orientation : Orientation.values())
-            dirs.add(orientation.toVector());
+            positions.add(parentsPosition.add(orientation.toVector()));
 
-        while(!dirs.isEmpty())
+        while(!positions.isEmpty())
         {
-            int i = generator.nextInt(dirs.size());
-            Vector2d childPosition = dirs.get(i).updateWithBoundaries(bottomLeft, topRight);
+            int i = generator.nextInt(positions.size());
+            Vector2d childPosition = positions.get(i).updateWithBoundaries(bottomLeft, topRight);
             if (isFree(childPosition))
                 return childPosition;
-            dirs.remove(i);
+            positions.remove(i);
         }
 
         for (Orientation orientation : Orientation.values())
-            dirs.add(orientation.toVector());
-        return dirs.get(generator.nextInt(dirs.size())).updateWithBoundaries(bottomLeft, topRight);
+            positions.add(parentsPosition.add(orientation.toVector()));
+        return positions.get(generator.nextInt(positions.size())).updateWithBoundaries(bottomLeft, topRight);
     }
 
     private boolean isInJungle(Vector2d position)

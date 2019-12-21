@@ -42,11 +42,6 @@ public class Animal
         this(position, energy, new Genotype(generator), null, generator);
     }
 
-    public Animal(Vector2d position, int energy, WorldMap map)
-    {
-        this(position, energy, map, new Random());
-    }
-
     public Vector2d getPosition()
     {
         return this.position;

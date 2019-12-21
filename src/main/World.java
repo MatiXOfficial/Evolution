@@ -26,6 +26,6 @@ public class World
         }
         WorldMap map = new WorldMap((int)(double) data.get("width"), (int)(double) data.get("height"), (int)(double) data.get("startEnergy"), (int)(double) data.get("moveEnergy"),
                                     (int)(double) data.get("plantEnergy"), data.get("jungleRatio"), (int)(double) data.get("startAnimals"));
-        new VisualizationFrame(map, 10);
+        new VisualizationFrame(map, 20);
     }
 }
