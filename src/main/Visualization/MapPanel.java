@@ -60,7 +60,7 @@ public class MapPanel extends JPanel
                 g2d.setPaint(new Color(0, 92, 153));
             else if (animal.getEnergy() < 8 * tresholdEnergy)
                 g2d.setPaint(new Color(0, 61, 102));
-            else if (animal.getEnergy() < 16 * tresholdEnergy)
+            else
                 g2d.setPaint(new Color(0, 46, 77));
             Vector2d position = animal.getPosition();
             Ellipse2D circle = new Ellipse2D.Double((position.x - map.getBottomLeft().x) * multWidth, (position.y - map.getBottomLeft().y) * multHeight, multWidth, multHeight);
