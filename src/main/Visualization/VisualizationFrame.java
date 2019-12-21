@@ -7,13 +7,17 @@ import static java.lang.Integer.*;
 public class VisualizationFrame extends JFrame implements ActionListener
 {
     private WorldMap map;
+
     private JButton startStopButton;
     private JButton nextDayButton;
     private JButton fasterButton;
     private JButton slowerButton;
     private MapPanel mapPanel;
+    private JLabel daysLabel;
+
     private Timer timer;
     private int delay;
+    private int daysCounter;
 
     public VisualizationFrame(WorldMap map, int delay)
     {
@@ -25,6 +29,7 @@ public class VisualizationFrame extends JFrame implements ActionListener
 
         this.map = map;
         this.delay = delay;
+        this.daysCounter = 0;
         int mapWidth = map.getWidth();
         int mapHeight = map.getHeight();
         double ratio = (double)mapHeight / mapWidth;
@@ -69,6 +74,11 @@ public class VisualizationFrame extends JFrame implements ActionListener
         slowerButton.addActionListener(this);
         add(slowerButton);
 
+        daysLabel = new JLabel("Minęło dni: " + daysCounter);
+        daysLabel.setSize(100, 40);
+        daysLabel.setLocation(350, height - 90);
+        add(daysLabel);
+
         mapPanel = new MapPanel(width - 40, height - 120, map);
         mapPanel.setSize(width - 20, height - 100);
         mapPanel.setLocation(10, 10);
@@ -110,6 +120,8 @@ public class VisualizationFrame extends JFrame implements ActionListener
     {
         map.daySimulation();
         mapPanel.repaint();
+        daysCounter++;
+        daysLabel.setText("Minęło dni: " + daysCounter);
     }
 
 }
