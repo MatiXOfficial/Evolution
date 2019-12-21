@@ -54,7 +54,7 @@ public class AnimalsHashMap
             return null;
 
         LinkedList<Animal> animalsList = this.animals.get(position);
-        int maxEnergy = 0;
+        int maxEnergy = Integer.MIN_VALUE;
         for (Animal animal : animalsList)
             if (animal.getEnergy() > maxEnergy)
                 maxEnergy = animal.getEnergy();

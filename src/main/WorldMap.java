@@ -67,6 +67,12 @@ public class WorldMap
         this(startEnergy, plantEnergy, moveEnergy, new Vector2d(0, 0), new Vector2d(width - 1, height - 1),
                 new Vector2d((int)(width - width * jungleRatio)/2, (int)(height - height * jungleRatio)/2), new Vector2d((int)(width + width * jungleRatio)/2, (int)(height + height * jungleRatio)/2),
                 new Random(), firstAnimals);
+        if (width < 1 || height < 1)
+            throw new IllegalArgumentException("Width and Height have to be greater than 1!");
+        if (firstAnimals < 0)
+            throw new IllegalArgumentException("First animals number can not be less than 0");
+        if (jungleRatio > 1 || jungleRatio < 0)
+            throw new IllegalArgumentException("Jungle ratio has to be between 0 and 1");
     }
 
     public Vector2d getBottomLeft()
@@ -125,10 +131,7 @@ public class WorldMap
 
     public LinkedList<Vector2d> getPlantsToVisualization()
     {
-        LinkedList<Vector2d> result = new LinkedList<>();
-        for (Vector2d position : plantsSet)
-            result.add(position);
-        return result;
+        return new LinkedList<>(plantsSet);
     }
 
     private void clearPhase()
@@ -155,9 +158,7 @@ public class WorldMap
 
     private void eatPhase()
     {
-        LinkedList<Vector2d> positions = new LinkedList<>();
-        for (Vector2d position : plantsSet)
-            positions.add(position);
+        LinkedList<Vector2d> positions = new LinkedList<>(plantsSet);
 
         for (Vector2d position : positions)
         {
