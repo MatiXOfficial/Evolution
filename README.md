@@ -1,6 +1,6 @@
 # Evolution
-Pierwszy projekt na Programowaniu Obiektowym (semestr 3)
+First project on Object-Oriented Programming (term 3)
 
-Treść zadania: https://github.com/apohllo/obiektowe-lab/tree/master/lab8
+Task: 2D map simulating animals' evolution.
 
-Dane wejściowe mogą zostać odczytane z pliku <em>dane.json</em>.
+Input data can be changed in <em>dane.json</em>.
