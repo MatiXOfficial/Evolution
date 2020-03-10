@@ -1,5 +1,5 @@
 # Evolution
-First project on Object-Oriented Programming (term 3)
+First project on Object-Oriented Programming course at AGH UST (semester 3)
 
 Task: 2D map simulating animals' evolution.
 
